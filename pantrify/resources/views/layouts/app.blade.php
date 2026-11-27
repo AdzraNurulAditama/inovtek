@@ -1,14 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Pantrify')</title>
-    
-    <!-- PASTIKAN CDN INI ADA DI HEAD -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <style>
         body {
             background-color: #fcfaf8;
@@ -16,19 +16,20 @@
             margin: 0;
             padding: 0;
         }
+
         .app-layout {
             display: flex;
             min-height: 100vh;
         }
+
         .main-content-area {
             flex-grow: 1;
             padding: 2rem;
-            margin-left: 240px; /* Lebar sidebar */
+            margin-left: 240px;
             max-width: calc(100% - 240px);
             overflow-x: hidden;
         }
-        
-        /* Sidebar Styling */
+
         .pantrify-sidebar {
             width: 220px;
             min-width: 220px;
@@ -45,7 +46,9 @@
             top: 0;
             left: 0;
             z-index: 100;
+            overflow-y: auto;
         }
+
         .pantrify-brand-container {
             display: flex;
             align-items: center;
@@ -54,20 +57,35 @@
             margin-bottom: 1.5rem;
             text-decoration: none;
         }
+
         .pantrify-brand-mark {
-            width: 40px; height: 40px;
-            display: grid; place-items: center;
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
             border-radius: 10px;
             background: #0f172a;
             color: #ffffff;
             font-size: 1.1rem;
             flex-shrink: 0;
         }
+
         .pantrify-brand-text {
             font-weight: 700;
             color: #0f172a;
             font-size: 1.1rem;
         }
+
+        .pantrify-menu-label {
+            color: #94a3b8;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.5rem 0.85rem;
+            margin-top: 0.3rem;
+        }
+
         .pantrify-side-link {
             display: flex;
             align-items: center;
@@ -81,9 +99,22 @@
             margin: 0.2rem 0;
             transition: all 0.2s ease;
         }
-        .pantrify-side-link i { font-size: 1.15rem; flex-shrink: 0; }
-        .pantrify-side-link:hover { color: #0f172a; background: #f1f5f9; }
-        .pantrify-side-link.active { color: #ffffff; background: #0f172a; }
+
+        .pantrify-side-link i {
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .pantrify-side-link:hover {
+            color: #0f172a;
+            background: #f1f5f9;
+        }
+
+        .pantrify-side-link.active {
+            color: #ffffff;
+            background: #0f172a;
+        }
+
         .pantrify-sidebar-bottom {
             margin-top: auto;
             padding-top: 1rem;
@@ -92,73 +123,155 @@
         }
 
         @media(max-width: 991.98px) {
-            .app-layout { flex-direction: column; }
-            .pantrify-sidebar {
-                width: 100%; height: 70px; min-width: 0;
-                margin: 0; padding: 0.5rem 1rem;
-                border-radius: 0;
-                flex-direction: row; justify-content: space-around;
-                align-items: center;
-                position: sticky; top: 0;
+            .app-layout {
+                flex-direction: column;
             }
-            .pantrify-brand-container, .pantrify-sidebar-bottom, .pantrify-side-link span {
+
+            .pantrify-sidebar {
+                width: 100%;
+                height: 70px;
+                min-width: 0;
+                margin: 0;
+                padding: 0.5rem 1rem;
+                border-radius: 0;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+                position: sticky;
+                top: 0;
+                overflow: visible;
+            }
+
+            .pantrify-brand-container,
+            .pantrify-sidebar-bottom,
+            .pantrify-menu-label,
+            .pantrify-side-link span {
                 display: none;
             }
-            .pantrify-side-link { padding: 0.5rem; margin: 0; }
-            .main-content-area { margin-left: 0; max-width: 100%; padding: 1rem; }
+
+            .pantrify-side-link {
+                padding: 0.5rem;
+                margin: 0;
+            }
+
+            .main-content-area {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 1rem;
+            }
         }
     </style>
+
+    @stack('styles')
 </head>
+
 <body>
 
-    <div class="app-layout">
-        @php
-            $pantrifyMenus = [
-                ['route' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'bi-grid-fill'],
-                ['route' => 'meal-planner', 'label' => 'Meal Planner', 'icon' => 'bi-journal-richtext'],
-                ['route' => 'stok-dapur', 'label' => 'Stok Dapur', 'icon' => 'bi-basket2'],
-                ['route' => 'anggaran', 'label' => 'Anggaran', 'icon' => 'bi-wallet2'],
-                ['route' => 'scan-struk', 'label' => 'Scan Struk', 'icon' => 'bi-receipt'],
-            ];
-        @endphp
+<div class="app-layout">
 
-        <!-- SIDEBAR -->
-        <aside class="pantrify-sidebar">
-            <a href="{{ route('dashboard') }}" class="pantrify-brand-container">
-                <div class="pantrify-brand-mark">
-                    <i class="bi bi-egg-fried"></i>
-                </div>
-                <span class="pantrify-brand-text">Pantrify</span>
-            </a>
+    @php
+        $pantrifyMenus = [
+            [
+                'route' => 'dashboard',
+                'label' => 'Dashboard',
+                'icon' => 'bi-grid-fill'
+            ],
+            [
+                'route' => 'meal-planner',
+                'label' => 'Meal Planner',
+                'icon' => 'bi-journal-richtext'
+            ],
+            [
+                'route' => 'stok-dapur',
+                'label' => 'Stok Dapur',
+                'icon' => 'bi-basket2'
+            ],
+            [
+                'route' => 'anggaran',
+                'label' => 'Anggaran',
+                'icon' => 'bi-wallet2'
+            ],
+            [
+                'route' => 'scan-struk',
+                'label' => 'Scan Struk',
+                'icon' => 'bi-receipt'
+            ],
+        ];
 
-            @foreach ($pantrifyMenus as $menu)
-                @php
-                    $routeExists = \Illuminate\Support\Facades\Route::has($menu['route']);
-                    $isActive = $routeExists && request()->routeIs($menu['route']);
-                @endphp
-                @if ($routeExists)
-                    <a href="{{ route($menu['route']) }}"
-                       class="pantrify-side-link {{ $isActive ? 'active' : '' }}">
-                        <i class="bi {{ $menu['icon'] }}"></i>
-                        <span>{{ $menu['label'] }}</span>
-                    </a>
-                @endif
-            @endforeach
+        $pantrifyAdditionalMenus = [
+    [
+        'route' => 'price-tracker',
+        'label' => 'Price Tracker',
+        'icon' => 'bi-tags'
+    ],
+];
+    @endphp
 
-            <div class="pantrify-sidebar-bottom">
-                <a href="{{ route('dashboard') }}" class="pantrify-side-link">
-                    <i class="bi bi-person-circle"></i>
-                    <span>Profil</span>
-                </a>
+    <!-- SIDEBAR -->
+    <aside class="pantrify-sidebar">
+
+        <a href="{{ route('dashboard') }}"
+           class="pantrify-brand-container">
+
+            <div class="pantrify-brand-mark">
+                <i class="bi bi-egg-fried"></i>
             </div>
-        </aside>
 
-        <!-- KONTEN UTAMA -->
-        <main class="main-content-area">
-            @yield('content')
-        </main>
-    </div>
+            <span class="pantrify-brand-text">Pantrify</span>
+        </a>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="pantrify-menu-label">Menu Utama</div>
+
+        @foreach ($pantrifyMenus as $menu)
+
+            @if (\Illuminate\Support\Facades\Route::has($menu['route']))
+
+                <a href="{{ route($menu['route']) }}"
+                   class="pantrify-side-link {{ request()->routeIs($menu['route']) ? 'active' : '' }}">
+
+                    <i class="bi {{ $menu['icon'] }}"></i>
+                    <span>{{ $menu['label'] }}</span>
+
+                </a>
+
+            @endif
+
+        @endforeach
+
+        <div class="pantrify-menu-label">Fitur Lainnya</div>
+
+        @foreach ($pantrifyAdditionalMenus as $menu)
+
+            @if (\Illuminate\Support\Facades\Route::has($menu['route']))
+
+                <a href="{{ route($menu['route']) }}"
+                   class="pantrify-side-link {{ request()->routeIs($menu['route']) ? 'active' : '' }}">
+
+                    <i class="bi {{ $menu['icon'] }}"></i>
+                    <span>{{ $menu['label'] }}</span>
+
+                </a>
+
+            @endif
+
+        @endforeach
+
+        
+
+    </aside>
+
+    <!-- KONTEN UTAMA -->
+    <main class="main-content-area">
+
+        @yield('content')
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+@stack('scripts')
+
 </body>
 </html>
