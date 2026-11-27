@@ -120,6 +120,17 @@
                 ['route' => 'anggaran', 'label' => 'Anggaran', 'icon' => 'bi-wallet2'],
                 ['route' => 'scan-struk', 'label' => 'Scan Struk', 'icon' => 'bi-receipt'],
             ];
+
+            $pantrifyAdditionalMenus = [
+                [
+                    'route' => 'price-tracker',
+                    'label' => 'Price Tracker',
+                    'icon' => 'bi-tags'
+                ],
+            ];
+
+            // Menggabungkan menu utama dan menu tambahan
+            $allPantrifyMenus = array_merge($pantrifyMenus, $pantrifyAdditionalMenus);
         @endphp
 
         <!-- SIDEBAR -->
@@ -131,7 +142,7 @@
                 <span class="pantrify-brand-text">Pantrify</span>
             </a>
 
-            @foreach ($pantrifyMenus as $menu)
+            @foreach ($allPantrifyMenus as $menu)
                 @php
                     $routeExists = \Illuminate\Support\Facades\Route::has($menu['route']);
                     $isActive = $routeExists && request()->routeIs($menu['route']);
