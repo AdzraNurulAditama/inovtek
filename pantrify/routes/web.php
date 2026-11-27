@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MealPlannerController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,3 +15,4 @@ foreach (['meal-planner', 'daftar-belanja', 'stok-dapur', 'scan-struk', 'anggara
         ->defaults('slug', $slug)
         ->name($slug);
 }
+Route::get('/meal-planner', [MealPlannerController::class, 'index'])->name('meal-planner');

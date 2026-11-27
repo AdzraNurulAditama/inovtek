@@ -7,10 +7,10 @@
     $rp = fn ($n) => 'Rp' . number_format($n, 0, ',', '.');
     $level = $persen >= 90 ? 'danger' : ($persen >= 70 ? 'warning' : 'success');
     $sisaAnggaran = $anggaran - $terpakai;
+    $jumlahNotif = count($stokMenipis);
 @endphp
 
 <style>
-    /* Pastikan tidak ada margin-top berlebih di sini */
     .pantry-dashboard-container {
         padding-top: 0.5rem;
     }
@@ -33,10 +33,10 @@
         border: none;
     }
     .icon-box {
-        width: 44px; height: 44px;
+        width: 42px; height: 42px;
         display: flex; align-items: center; justify-content: center;
         border-radius: 0.75rem;
-        font-size: 1.2rem;
+        font-size: 1.15rem;
     }
     .custom-progress {
         height: 8px;
@@ -56,35 +56,69 @@
 
 <div class="container-fluid pantry-dashboard-container px-0">
     
-    {{-- Judul Halaman yang Rapi di Atas Konten --}}
+    {{-- Header Atas: Judul + Notifikasi Bahan/Stok + Profil --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 fw-bold text-dark mb-0">Dashboard</h1>
+        <div>
+            <h1 class="h4 fw-bold text-dark mb-0">Dashboard</h1>
+            <p class="text-muted small mb-0">Ringkasan dapur dan anggaranmu hari ini</p>
+        </div>
+        
         <div class="d-flex align-items-center gap-3">
-            <span class="small text-muted"><i class="bi bi-bell"></i></span>
+            {{-- Dropdown Notifikasi Bahan & Stok --}}
+            <div class="dropdown">
+                <button class="btn btn-white bg-white border rounded-circle position-relative p-2 shadow-sm" 
+                        type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifikasi Stok">
+                    <i class="bi bi-bell text-dark"></i>
+                    @if($jumlahNotif > 0)
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+                            {{ $jumlahNotif }}
+                        </span>
+                    @endif
+                </button>
+                <div class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-3" style="width: 300px;">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <span class="fw-bold small text-dark">Notifikasi Stok & Bahan</span>
+                        <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill small">{{ $jumlahNotif }} Baru</span>
+                    </div>
+                    @forelse($stokMenipis as $notif)
+                        <a href="{{ route('stok-dapur') }}" class="dropdown-item rounded-3 py-2 px-2 d-flex align-items-start gap-2 text-wrap">
+                            <span class="rounded-circle bg-{{ $notif['status'] }} mt-1 flex-shrink-0" style="width:8px;height:8px"></span>
+                            <div class="small">
+                                <div class="fw-semibold text-dark">{{ $notif['nama'] }} ({{ $notif['sisa'] }})</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">{{ $notif['catatan'] ?? 'Stok menipis, segera beli ulang' }}</div>
+                            </div>
+                        </a>
+                    @empty
+                        <div class="text-center py-3 text-muted small">Tidak ada notifikasi stok baru.</div>
+                    @endforelse
+                </div>
+            </div>
+
+            {{-- Badge Profil --}}
             <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-semibold small">
-                <i class="bi bi-person-fill me-1"></i> Jroy
+                <i class="bi bi-person-fill me-1"></i> {{ auth()->user()->name ?? 'Jroy' }}
             </span>
         </div>
     </div>
 
     <div class="row g-4">
         
-        {{-- Kolom Kiri --}}
+        {{-- Kolom Kiri (Utama) --}}
         <div class="col-12 col-xl-8">
             
-            {{-- Hero Section: Menu Hari Ini --}}
+            {{-- 1. Menu Makanan Hari Ini --}}
             <div class="card hero-banner mb-4">
                 <div class="row g-0 align-items-center">
-                    <div class="col-md-7 p-4 p-lg-4">
+                    <div class="col-md-7 p-4">
                         <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-3 py-1 small fw-semibold mb-2">
-                            <i class="bi bi-stars me-1"></i> Rekomendasi Hari Ini
+                            <i class="bi bi-stars me-1"></i> Menu Makanan Hari Ini
                         </span>
                         <h2 class="fw-bold mb-2 text-white fs-3">{{ $menuHariIni['nama'] }}</h2>
                         <p class="text-white-50 small mb-3">
                             Estimasi biaya: <strong class="text-white">{{ $rp($menuHariIni['biaya']) }}</strong> &bull; <i class="bi bi-clock me-1"></i>{{ $menuHariIni['waktu'] }}
                         </p>
                         <div class="d-flex flex-wrap gap-2">
-                            <a href="{{ route('meal-planner') }}" class="btn btn-success fw-semibold rounded-pill px-3.5 py-2 text-white small">
+                            <a href="{{ route('meal-planner') }}" class="btn btn-success fw-semibold rounded-pill px-4 py-2 text-white small">
                                 Lihat Resep
                             </a>
                             <a href="{{ route('meal-planner') }}" class="btn btn-outline-light fw-semibold rounded-pill px-3 py-2 small">
@@ -101,11 +135,35 @@
                 </div>
             </div>
 
-            {{-- Statistik Cepat --}}
-            <div class="row g-4 mb-4">
-                <div class="col-12 col-md-6">
+            {{-- Baris 3 Kartu Ringkasan: Sisa Anggaran, Ringkasan Anggaran Mingguan, Ringkasan Stok Dapur --}}
+            <div class="row g-3 mb-4">
+                
+                {{-- 2. Sisa Anggaran --}}
+                <div class="col-12 col-md-4">
                     <div class="card pantry-card h-100">
-                        <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div class="card-body p-3 p-lg-4 d-flex flex-column justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary small fw-medium">Sisa Anggaran</span>
+                                <div class="icon-box bg-success bg-opacity-10 text-success">
+                                    <i class="bi bi-cash-coin"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="fs-4 fw-bold {{ $sisaAnggaran < 0 ? 'text-danger' : 'text-dark' }} mb-1">
+                                    {{ $rp($sisaAnggaran) }}
+                                </h3>
+                                <p class="text-muted small mb-0">
+                                    {{ $sisaAnggaran < 0 ? 'Melebihi batas mingguan' : 'Aman untuk belanja' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- 3. Ringkasan Anggaran Mingguan --}}
+                <div class="col-12 col-md-4">
+                    <div class="card pantry-card h-100">
+                        <div class="card-body p-3 p-lg-4 d-flex flex-column justify-content-between">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-secondary small fw-medium">Anggaran Mingguan</span>
                                 <div class="icon-box bg-primary bg-opacity-10 text-primary">
@@ -113,43 +171,49 @@
                                 </div>
                             </div>
                             <div>
-                                <h3 class="fs-4 fw-bold text-dark mb-1">{{ $rp($sisaAnggaran) }}</h3>
-                                <p class="text-muted small mb-3">Sisa dari total {{ $rp($anggaran) }}</p>
-                                <div class="custom-progress mb-2">
+                                <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                    <h3 class="fs-5 fw-bold text-dark mb-0">{{ $rp($terpakai) }}</h3>
+                                    <span class="small text-muted">/ {{ $rp($anggaran) }}</span>
+                                </div>
+                                <div class="custom-progress my-2">
                                     <div class="progress-bar bg-{{ $level }} rounded-pill" style="width: {{ min($persen, 100) }}%"></div>
                                 </div>
                                 <div class="d-flex justify-content-between small text-secondary">
                                     <span>Terpakai {{ $persen }}%</span>
-                                    <a href="{{ route('anggaran') }}" class="fw-semibold text-success text-decoration-none">Detail</a>
+                                    <a href="{{ route('anggaran') }}" class="fw-semibold text-primary text-decoration-none">Detail</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-12 col-md-6">
+                {{-- 4. Ringkasan Stok Dapur --}}
+                <div class="col-12 col-md-4">
                     <div class="card pantry-card h-100">
-                        <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div class="card-body p-3 p-lg-4 d-flex flex-column justify-content-between">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="text-secondary small fw-medium">Stok Dapur</span>
+                                <span class="text-secondary small fw-medium">Ringkasan Stok</span>
                                 <div class="icon-box bg-warning bg-opacity-10 text-warning">
                                     <i class="bi bi-box-seam"></i>
                                 </div>
                             </div>
                             <div>
                                 <h3 class="fs-4 fw-bold text-dark mb-1">{{ $totalStok }} <span class="fs-6 fw-normal text-muted">Item</span></h3>
-                                <p class="text-warning fw-medium small mb-3">{{ count($stokMenipis) }} bahan perlu perhatian</p>
-                                <a href="{{ route('stok-dapur') }}" class="btn btn-outline-secondary w-100 rounded-pill py-2 small fw-semibold">
-                                    Kelola Stok Dapur <i class="bi bi-arrow-right ms-1"></i>
-                                </a>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-warning fw-medium small">{{ $jumlahNotif }} menipis</span>
+                                    <a href="{{ route('stok-dapur') }}" class="small fw-semibold text-dark text-decoration-none">
+                                        Kelola <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             {{-- Scan Struk Banner --}}
-            <div class="card pantry-card bg-light border-0 mb-4">
+            <div class="card pantry-card bg-light border-0">
                 <div class="card-body p-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
                     <div class="d-flex align-items-center gap-3">
                         <div class="icon-box bg-white border text-dark shadow-sm flex-shrink-0">
@@ -168,23 +232,28 @@
 
         </div>
 
-        {{-- Kolom Kanan --}}
+        {{-- Kolom Kanan (Notifikasi Bahan/Stok & Tips AI) --}}
         <div class="col-12 col-xl-4">
             
-            {{-- Stok Menipis List --}}
+            {{-- 5. Notifikasi Bahan atau Stok --}}
             <div class="card pantry-card mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="h6 fw-bold text-dark mb-0">Perlu Perhatian</h3>
+                        <div class="d-flex align-items-center gap-2">
+                            <h3 class="h6 fw-bold text-dark mb-0">Notifikasi Bahan & Stok</h3>
+                            @if($jumlahNotif > 0)
+                                <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem;">{{ $jumlahNotif }}</span>
+                            @endif
+                        </div>
                         <a href="{{ route('stok-dapur') }}" class="small fw-semibold text-success text-decoration-none">Semua</a>
                     </div>
 
-                    @if(count($stokMenipis) > 0)
+                    @if($jumlahNotif > 0)
                         <ul class="list-group list-group-flush list-group-clean">
                             @foreach ($stokMenipis as $item)
                                 <li class="list-group-item d-flex align-items-center justify-content-between py-2.5">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span class="rounded-circle bg-{{ $item['status'] }}" style="width:8px;height:8px"></span>
+                                        <span class="rounded-circle bg-{{ $item['status'] }} flex-shrink-0" style="width:8px;height:8px"></span>
                                         <div>
                                             <span class="fw-medium text-dark small d-block">{{ $item['nama'] }}</span>
                                             <span class="text-muted" style="font-size: 0.72rem;">{{ $item['catatan'] ?? 'Stok menipis' }}</span>
