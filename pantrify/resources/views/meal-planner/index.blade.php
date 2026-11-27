@@ -336,7 +336,7 @@
                                                     'kalori' => $makan['kalori'] . ' kkal',
                                                     'protein' => $makan['protein'] . 'g'
                                                 ]) }}" class="btn btn-white bg-white border rounded-pill px-3 py-1.5 small fw-semibold shadow-sm text-decoration-none text-dark">
-                                                    Resep <i class="bi bi-arrow-right ms-1"></i>
+                                                    Detail Menu <i class="bi bi-arrow-right ms-1"></i>
                                                 </a>
                                             </div>
                                         </div>

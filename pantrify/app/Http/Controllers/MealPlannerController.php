@@ -135,6 +135,6 @@ class MealPlannerController extends Controller
         ]
     ];
 
-    return view('meal-planner.detail-resep', compact('detail'));
+    return view('meal-planner.resep', compact('detail'));
 }
 }
