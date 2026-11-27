@@ -110,4 +110,31 @@ class MealPlannerController extends Controller
             'rencanaMenu'
         ));
     }
+    public function showResep(Request $request)
+{
+    // Mengambil parameter menu yang dikirim dari URL
+    $namaMenu = $request->query('nama', 'Menu Pilihan');
+    $waktu = $request->query('waktu', 'Makan Utama');
+    $biaya = $request->query('biaya', 'Rp15.000');
+    $kalori = $request->query('kalori', '500 kkal');
+    $protein = $request->query('protein', '30g');
+
+    // Data dummy bahan dan instruksi (bisa disesuaikan dengan database nanti)
+    $detail = [
+        'nama' => $namaMenu,
+        'waktu' => $waktu,
+        'biaya' => $biaya,
+        'kalori' => $kalori,
+        'protein' => $protein,
+        'bahan' => ['Bahan utama sesuai porsi', 'Bawang merah & bawang putih', 'Minyak sayur secukupnya', 'Garam, gula, dan penyedap rasa'],
+        'instruksi' => [
+            'Siapkan seluruh bahan utama dan bumbu yang diperlukan di atas meja dapur.',
+            'Haluskan bumbu dasar, lalu tumis menggunakan sedikit minyak hingga harum dan matang.',
+            'Masukkan bahan utama ke dalam wajan, aduk merata dan tambahkan sedikit air jika diperlukan.',
+            'Masak hingga matang sempurna, koreksi rasa, lalu angkat dan sajikan selagi hangat.'
+        ]
+    ];
+
+    return view('meal-planner.detail-resep', compact('detail'));
+}
 }

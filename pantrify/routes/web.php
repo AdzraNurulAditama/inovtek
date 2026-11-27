@@ -16,3 +16,4 @@ foreach (['meal-planner', 'daftar-belanja', 'stok-dapur', 'scan-struk', 'anggara
         ->name($slug);
 }
 Route::get('/meal-planner', [MealPlannerController::class, 'index'])->name('meal-planner');
+Route::get('/meal-planner/resep', [MealPlannerController::class, 'showResep'])->name('meal-planner.resep');
