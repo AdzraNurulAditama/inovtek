@@ -53,3 +53,20 @@ Route::view('/profil', 'profile.index')
 // Halaman Notifikasi
 Route::view('/notifikasi', 'notifications.index')
     ->name('notifications');
+
+//Halaman kelola Stok
+Route::view('/kelola-stok', 'kelola-stok.index')
+    ->name('kelola-stok');
+
+
+//Halaman Scan Struk
+Route::view('/scan-struk', 'scan-struk.index')
+    ->name('scan-struk');
+
+//Halaman Anggaran Belanja
+Route::view('/anggaran', 'anggaran-belanja.index')
+    ->name('anggaran');
+
+//Halaman Anggaran Belanja Mingguan
+Route::view('/anggaran-mingguan', 'anggaran-mingguan.index')
+    ->name('anggaran-mingguan');
