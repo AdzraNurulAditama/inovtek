@@ -1,36 +1,42 @@
-@php
-    // route name => [label, icon Bootstrap Icons]
-    $menu = [
-        'dashboard'      => ['Dashboard',      'bi-grid-1x2'],
-        'meal-planner'   => ['Meal Planner',   'bi-calendar-week'],
-        'daftar-belanja' => ['Daftar Belanja', 'bi-basket'],
-        'stok-dapur'     => ['Stok Dapur',     'bi-box-seam'],
-        'scan-struk'     => ['Scan Struk',     'bi-receipt'],
-        'anggaran'       => ['Anggaran',       'bi-wallet2'],
-        'price-tracker'  => ['Price Tracker',  'bi-graph-up-arrow'],
-        'notifikasi'     => ['Notifikasi',     'bi-bell'],
-        'profil'         => ['Profil',         'bi-person'],
-    ];
-@endphp
+<style>
+    .pantrify-sidebar {
+        width: 80px;
+        min-width: 80px;
+        height: calc(100vh - 2rem); /* Sesuaikan tinggi dengan layar dikurangi padding */
+        padding: 1.2rem 0.6rem;
+        margin: 1rem 0 1rem 1rem;
+        border-radius: 1.25rem;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: fixed; /* Ubah ke fixed supaya tidak mendorong konten utama ke bawah */
+        top: 0;
+        left: 0;
+        z-index: 100;
+    }
+    
+    /* Tambahkan padding kiri pada body/wrapper utama di layouts.app agar tidak tertutup sidebar fixed */
+    .main-content-wrapper {
+        margin-left: 105px; /* Lebar sidebar (80px) + margin */
+        padding: 1.5rem;
+        width: calc(100% - 105px);
+    }
 
-<aside class="sidebar">
-    <a href="{{ route('dashboard') }}" class="brand">
-        <span class="brand__mark"><i class="bi bi-egg-fried"></i></span>
-        <span>
-            <span class="brand__name">Pantrify</span>
-            <span class="brand__sub">Web Application</span>
-        </span>
-    </a>
-
-    <nav class="nav" aria-label="Menu utama">
-        <p class="nav__label">Main menu</p>
-        @foreach ($menu as $routeName => [$label, $icon])
-            <a href="{{ route($routeName) }}"
-               class="nav__item {{ request()->routeIs($routeName) ? 'is-active' : '' }}"
-               @if (request()->routeIs($routeName)) aria-current="page" @endif>
-                <i class="bi {{ $icon }}"></i>
-                <span>{{ $label }}</span>
-            </a>
-        @endforeach
-    </nav>
-</aside>
+    @media(max-width: 991.98px) {
+        .pantrify-sidebar {
+            width: 100%; height: 70px;
+            margin: 0; padding: 0.5rem 1rem;
+            border-radius: 0;
+            flex-direction: row; justify-content: space-around;
+            position: sticky; top: 0; left: auto;
+        }
+        .main-content-wrapper {
+            margin-left: 0;
+            width: 100%;
+            padding: 1rem;
+        }
+    }
+</style>
