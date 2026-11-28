@@ -272,7 +272,7 @@
                                         Terpakai {{ $persen }}%
                                     </span>
 
-                                    <a href="{{ route('anggaran') }}"
+                                    <a href="{{ route('anggaran-mingguan') }}"
                                        class="fw-semibold text-success text-decoration-none">
                                         Detail
                                     </a>
@@ -315,7 +315,7 @@
                                     {{ $jumlahNotif }} bahan menipis
                                 </p>
 
-                                <a href="{{ route('stok-dapur') }}"
+                                <a href="{{ route('kelola-stok') }}"
                                    class="small fw-semibold text-dark text-decoration-none">
                                     Kelola Stok
                                     <i class="bi bi-arrow-right"></i>
